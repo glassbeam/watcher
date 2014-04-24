@@ -1,0 +1,79 @@
+<?xml version='1.0'?>
+
+<project name='inotify-java' default='build' basedir='.'>
+
+    <property name='version' value='2.1'/>
+    <property name='srcver' value='1.7'/>
+    <property name='build.path' value='build'/>
+
+    <target name='compile'
+        description='compiles the source'>
+        <mkdir dir='${build.path}'/>
+        <javac srcdir='classes'
+            includeantruntime='false'
+            source='${srcver}'
+            debug='on'
+            destdir='${build.path}'
+            debuglevel='lines,vars,source'/>
+        <javac srcdir='test'
+            includeantruntime='false'
+            source='${srcver}'
+            debug='on'
+            destdir='${build.path}'
+            debuglevel='lines,vars,source'
+            classpath='classes:../../lib/junit4-4.8.2.jar'/>
+    </target>
+
+    <target name='build' depends='compile'
+        description='creates a jar'>
+        <!-- TODO basedir should be build.path -->
+        <jar destfile='${ant.project.name}-${version}.jar' basedir='classes'>
+            <manifest>
+                <attribute
+                    name="Main-Class"
+                    value="com.den_4.inotify_java.LibraryMain"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name='apidoc'
+        description='generates API documentation'>
+        <javadoc sourcepath='classes'
+            destdir='apidoc'
+            author='true'
+            version='true'
+            stylesheetfile='stylesheet.css'/>
+    </target>
+
+    <target name='clean'
+        description='deletes build artifacts'>
+        <delete
+            file='${ant.project.name}-${version}.jar'>
+            <fileset dir='classes' includes='**/*.class'/>
+            <fileset dir='test' includes='**/*.class'/>
+        </delete>
+        <delete dir='reports'/>
+        <delete dir='${build.path}'/>
+    </target>
+
+    <target name='test' depends='compile'
+        description='runs test cases'>
+        <mkdir dir='reports'/>
+        <junit printsummary='withOutAndErr' haltonfailure='yes'>
+            <formatter type='xml' usefile='yes'/>
+            <classpath>
+                <pathelement path='${build.path}'/>
+                <pathelement path='test'/>
+                <pathelement path='../../lib/junit4-4.8.2.jar'/>
+            </classpath>
+            <batchtest fork='yes' todir="reports">
+                <fileset dir='test'>
+                    <include name='**/*.java'/>
+                    <exclude name='**/TestBootstrap.java'/>
+                    <exclude name='**/Utilities.java'/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+</project>

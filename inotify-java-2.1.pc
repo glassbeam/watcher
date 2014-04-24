@@ -1,0 +1,8 @@
+prefix=/home/suraj/repos/inotify_deps
+libdir=/home/suraj/repos/inotify_deps
+
+Name: inotify-java
+Description: inotify library for Java.
+Version: 2.1
+Libs: -L${libdir} -linotify-java
+
